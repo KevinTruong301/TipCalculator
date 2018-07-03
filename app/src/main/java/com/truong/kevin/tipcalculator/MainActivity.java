@@ -3,12 +3,13 @@ package com.truong.kevin.tipcalculator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener {
 
     private TextView tip;
     private TextView total;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     float tipNum;
     float billNum;
     float percentNum;
+    float totalNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,10 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         bill.setOnEditorActionListener(this);
 
+        addPercent.setOnClickListener(this);
+        subPercent.setOnClickListener(this);
+        percentNum = parsePercent(percent.getText().toString());
+        billNum = parseDollar(bill.getText().toString());
     }
 
     float calculateTip(float billAmount, float percentNum){
@@ -49,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
             tipNum = calculateTip(billNum, percentNum);
             tip.setText(Float.toString(tipNum));
+            totalNum = tipNum + billNum;
+
+            total.setText(Float.toString(totalNum));
+
         }
 
         return false;
@@ -64,5 +74,19 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         String noDollarSign;
         noDollarSign = dollar.substring(1, dollar.length());
         return Float.valueOf(noDollarSign);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.addPercent:
+                percentNum += .05;
+                percent.setText(Float.toString(percentNum*100)+"%");
+                break;
+            case R.id.subPercent:
+                percentNum -= .05;
+                percent.setText(Float.toString(percentNum*100)+"%");
+                break;
+        }
     }
 }
