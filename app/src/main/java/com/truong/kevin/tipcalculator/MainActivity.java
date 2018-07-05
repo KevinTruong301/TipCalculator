@@ -18,10 +18,10 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     private Button subPercent;
     private EditText bill;
 
-    float tipNum;
-    float billNum;
-    float percentNum;
-    float totalNum;
+    double tipNum;
+    double billNum;
+    double percentNum;
+    double totalNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +40,19 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         addPercent.setOnClickListener(this);
         subPercent.setOnClickListener(this);
         percentNum = parsePercent(percent.getText().toString());
-        billNum = parseDollar(bill.getText().toString());
+        billNum = 11;//parseDollar(bill.getText().toString());
     }
 
-    float calculateTip(float billAmount, float percentNum){
-        return billAmount*percentNum;
+    void calculateTip(){
+        tipNum = billNum * percentNum/100;
+        tip.setText(Double.toString(tipNum));
+    }
+
+    void calculateTotal(){
+
+        totalNum = tipNum + billNum;
+
+        total.setText(Double.toString(totalNum));
     }
 
     @Override
@@ -53,39 +61,47 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             billNum = parseDollar(bill.getText().toString());
             percentNum = parsePercent(percent.getText().toString());
 
-            tipNum = calculateTip(billNum, percentNum);
-            tip.setText(Float.toString(tipNum));
-            totalNum = tipNum + billNum;
+            calculateTip();
 
-            total.setText(Float.toString(totalNum));
+            calculateTotal();
 
         }
 
         return false;
     }
 
-    float parsePercent(String percent){
+    double parsePercent(String percent){
         String noPercentSign;
         noPercentSign = percent.substring(0, percent.length()-1);
-        return Float.valueOf(noPercentSign)/100;
+        return Double.valueOf(noPercentSign);
     }
 
-    float parseDollar(String dollar){
+    double parseDollar(String dollar){
         String noDollarSign;
         noDollarSign = dollar.substring(1, dollar.length());
-        return Float.valueOf(noDollarSign);
+        return Double.valueOf(noDollarSign);
+
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.addPercent:
-                percentNum += .05;
-                percent.setText(Float.toString(percentNum*100)+"%");
+
+                if( percentNum < 200){
+                    percentNum += 5;
+                    percent.setText(Integer.toString((int)(percentNum))+"%");
+                    calculateTip();
+                    calculateTotal();
+                }
                 break;
             case R.id.subPercent:
-                percentNum -= .05;
-                percent.setText(Float.toString(percentNum*100)+"%");
+                if(percentNum > 0){
+                    percentNum -= 5;
+                    percent.setText(Integer.toString((int)(percentNum))+"%");
+                    calculateTip();
+                    calculateTotal();
+                }
                 break;
         }
     }

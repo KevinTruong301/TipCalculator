@@ -65,8 +65,8 @@
         android:layout_alignStart="@+id/addPercent"
         android:layout_marginTop="46dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="$0.00" />
+        android:inputType="numberDecimal"
+        android:text="" />
 
     <TextView
         android:id="@+id/tip"
