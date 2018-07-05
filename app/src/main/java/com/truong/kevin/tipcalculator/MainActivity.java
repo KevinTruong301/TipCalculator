@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         addPercent.setOnClickListener(this);
         subPercent.setOnClickListener(this);
         percentNum = parsePercent(percent.getText().toString());
-        billNum = 11;//parseDollar(bill.getText().toString());
+        billNum = 0;
     }
 
     void calculateTip(){
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         if(i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_UNSPECIFIED){
-            billNum = parseDollar(bill.getText().toString());
+            billNum = Double.valueOf(bill.getText().toString());
             percentNum = parsePercent(percent.getText().toString());
 
             calculateTip();
