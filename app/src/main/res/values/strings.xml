@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Tip Calculator</string>
+    <string-array name="split_array">
+        <item>None</item>
+        <item>2 People</item>
+        <item>3 People</item>
+        <item>4 People</item>
+        <item>5 People</item>
+        <item>6 People</item>
+        <item>More</item>
+    </string-array>
 </resources>

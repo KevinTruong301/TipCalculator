@@ -7,19 +7,27 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-
+//Round with a trailing zero, add more function in spinner
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener {
 
     private TextView tip;
     private TextView total;
     private TextView percent;
+    private TextView splitTotal;
     private Button addPercent;
     private Button subPercent;
     private EditText bill;
+    private Spinner split;
 
+    int splitNum;
+
+    double splitTotalNum;
     double tipNum;
     double billNum;
     double percentNum;
@@ -36,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         addPercent = (Button) findViewById(R.id.addPercent);
         subPercent = (Button) findViewById(R.id.subPercent);
         bill = (EditText) findViewById(R.id.billAmountEdit);
+        split = (Spinner) findViewById(R.id.splitSpinner);
+        splitTotal = (TextView) findViewById(R.id.splitTotal);
 
         bill.setOnEditorActionListener(this);
 
@@ -43,6 +53,32 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         subPercent.setOnClickListener(this);
         percentNum = parsePercent(percent.getText().toString());
         billNum = 0;
+        totalNum = 0;
+        splitNum = 0;
+
+        setupSpinner();
+
+        split.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                switch (i){
+                    case 0: splitNum = 1; splitTotal(); break;
+                    case 1: splitNum = 2; splitTotal(); break;
+                    case 2: splitNum = 3; splitTotal(); break;
+                    case 3: splitNum = 4; splitTotal(); break;
+                    case 4: splitNum = 5; splitTotal(); break;
+                    case 5: splitNum = 6; splitTotal(); break;
+                    case 6: splitTotal(); break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         bill.addTextChangedListener(new TextWatcher() {
             @Override
@@ -62,9 +98,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
                 percentNum = parsePercent(percent.getText().toString());
 
-
                 calculateTip();
                 calculateTotal();
+                splitTotal();
             }
 
             @Override
@@ -72,6 +108,23 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
             }
         });
+    }
+
+    void splitTotal(){
+        if(splitNum != 0){
+            splitTotalNum = (double) Math.round((totalNum/splitNum)*100)/100;
+            splitTotal.setText('$' + Double.toString(splitTotalNum));
+        }
+    }
+
+    void setupSpinner(){
+        ArrayAdapter<CharSequence> adapterSplit = ArrayAdapter.createFromResource(this, R.array.split_array, android.R.layout.simple_spinner_item);
+
+        adapterSplit.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        split.setAdapter(adapterSplit);
+
+        split.setSelection(0);
     }
 
     void calculateTip(){
@@ -102,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
             calculateTip();
             calculateTotal();
+            splitTotal();
+
 
         }
 
