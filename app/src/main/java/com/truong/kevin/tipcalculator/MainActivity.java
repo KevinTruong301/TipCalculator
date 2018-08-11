@@ -1,7 +1,9 @@
 package com.truong.kevin.tipcalculator;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -41,34 +43,72 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         subPercent.setOnClickListener(this);
         percentNum = parsePercent(percent.getText().toString());
         billNum = 0;
+
+        bill.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!charSequence.toString().matches("")){
+                    billNum = Double.valueOf(charSequence.toString());
+                }
+                else{
+                    billNum = 0;
+                }
+
+
+                percentNum = parsePercent(percent.getText().toString());
+
+
+                calculateTip();
+                calculateTotal();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     void calculateTip(){
-        tipNum = billNum * percentNum/100;
-        tip.setText(Double.toString(tipNum));
+        tipNum = (double) Math.round((billNum * percentNum/100)*100)/100;
+        tip.setText('$'+Double.toString(tipNum));
     }
 
     void calculateTotal(){
 
-        totalNum = tipNum + billNum;
+        totalNum = (double) Math.round((tipNum + billNum) *100)/100;
 
-        total.setText(Double.toString(totalNum));
+        total.setText('$'+Double.toString(totalNum));
     }
 
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         if(i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_UNSPECIFIED){
-            billNum = Double.valueOf(bill.getText().toString());
+            if(!bill.getText().toString().matches("")){
+                billNum = Double.valueOf(bill.getText().toString());
+            }
+            else{
+                billNum = 0;
+            }
+
+
             percentNum = parsePercent(percent.getText().toString());
 
-            calculateTip();
 
+            calculateTip();
             calculateTotal();
 
         }
 
         return false;
     }
+
+
 
     double parsePercent(String percent){
         String noPercentSign;
