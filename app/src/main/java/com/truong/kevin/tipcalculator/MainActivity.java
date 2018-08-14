@@ -1,6 +1,8 @@
 package com.truong.kevin.tipcalculator;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                     case 3: splitNum = 4; splitTotal(); break;
                     case 4: splitNum = 5; splitTotal(); break;
                     case 5: splitNum = 6; splitTotal(); break;
-                    case 6: splitTotal(); break;
+                    case 6: splitMore(); break;
 
                 }
             }
@@ -95,12 +97,10 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                     billNum = 0;
                 }
 
-
                 percentNum = parsePercent(percent.getText().toString());
 
-                calculateTip();
-                calculateTotal();
-                splitTotal();
+                updateValues();
+
             }
 
             @Override
@@ -108,6 +108,42 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
             }
         });
+    }
+
+    void splitMore(){
+        final AlertDialog.Builder moreDialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog moreDialog = moreDialogBuilder.create();
+        final EditText moreDialogInput = new EditText(this);
+
+
+        moreDialogBuilder.setCancelable(true);
+        moreDialogBuilder.setTitle("More");
+        moreDialogBuilder.setMessage("Enter number of people");
+        moreDialogBuilder.setView(moreDialogInput);
+        moreDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                splitNum = Integer.valueOf(moreDialogInput.getText().toString());
+
+                splitTotal();
+            }
+        });
+        moreDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+
+
+
+        moreDialog.show();
+
+    }
+
+    void updateValues(){
+        calculateTip();
+        calculateTotal();
+        splitTotal();
     }
 
     void splitTotal(){
@@ -153,9 +189,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             percentNum = parsePercent(percent.getText().toString());
 
 
-            calculateTip();
-            calculateTotal();
-            splitTotal();
+            updateValues();
 
 
         }
@@ -183,19 +217,17 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         switch(view.getId()){
             case R.id.addPercent:
 
-                if( percentNum < 200){
+                if( percentNum < 50){
                     percentNum += 5;
                     percent.setText(Integer.toString((int)(percentNum))+"%");
-                    calculateTip();
-                    calculateTotal();
+                    updateValues();
                 }
                 break;
             case R.id.subPercent:
                 if(percentNum > 0){
                     percentNum -= 5;
                     percent.setText(Integer.toString((int)(percentNum))+"%");
-                    calculateTip();
-                    calculateTotal();
+                    updateValues();
                 }
                 break;
         }
