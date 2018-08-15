@@ -1,97 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
     <TextView
-        android:id="@+id/billLabel"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="63dp"
-        android:text="Bill Amount" />
-
-    <TextView
-        android:id="@+id/percentLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/addPercent"
-        android:layout_alignStart="@+id/billLabel"
-        android:text="Percent" />
-
-    <Button
-        android:id="@+id/addPercent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="109dp"
-        android:layout_marginTop="112dp"
-        android:text="+" />
-
-    <Button
-        android:id="@+id/subPercent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/percentLabel"
-        android:layout_alignParentEnd="true"
-        android:text="-" />
-
-    <TextView
-        android:id="@+id/tipLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/billLabel"
-        android:layout_marginTop="186dp"
-        android:text="Tip" />
-
-    <TextView
-        android:id="@+id/totalLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/billLabel"
-        android:layout_centerVertical="true"
-        android:text="Total" />
-
-    <EditText
-        android:id="@+id/billAmountEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/addPercent"
-        android:layout_marginTop="46dp"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/tip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/addPercent"
-        android:layout_alignTop="@+id/tipLabel"
-        android:text="$0.0" />
-
-    <TextView
-        android:id="@+id/percent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/percentLabel"
-        android:layout_toEndOf="@+id/billLabel"
-        android:text="15%" />
-
+        android:text="Total"
+        android:textSize="20sp"
+        android:gravity="center_horizontal"
+        />
     <TextView
         android:id="@+id/total"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/billAmountEdit"
-        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:textSize="50sp"
         android:text="$0.0" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tip: "
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0.0"
+            android:id="@+id/tip"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:weightSum="1"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Percent: "
+
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/percent"
+            android:text="15%"
+            android:layout_weight="1"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addPercent"
+            android:text="+"
+            android:layout_alignParentRight="true"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/subPercent"
+            android:text="-"
+            android:layout_alignParentRight="true"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Split Bill"
+/>
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/splitSpinner"
+            android:layout_weight="1"
+            android:layout_marginRight="20dp"
+></Spinner>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/splitTotal"
+            android:text="$0.0"
+            android:textSize="35sp"
+            android:layout_weight="2"/>
+    </LinearLayout>
 
 
-</RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bill Amount: "/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/billAmountEdit"
+                android:inputType="numberDecimal"
+                android:layout_alignParentBottom="true"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

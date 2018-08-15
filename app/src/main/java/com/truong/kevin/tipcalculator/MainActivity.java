@@ -1,34 +1,47 @@
 package com.truong.kevin.tipcalculator;
 
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//Round with a trailing zero, add more function in spinner
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener {
 
     private TextView tip;
     private TextView total;
     private TextView percent;
+    private TextView splitTotal;
     private Button addPercent;
     private Button subPercent;
     private EditText bill;
     private SharedPreferences savedValues;
-    CharSequence c;
 
-    float tipNum;
-    float billNum;
-    float percentNum;
-    float totalNum;
+    private Spinner split;
+
+    int splitNum;
+
+    double splitTotalNum;
+    double tipNum;
+    double billNum;
+    double percentNum;
+    double totalNum;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         addPercent = (Button) findViewById(R.id.addPercent);
         subPercent = (Button) findViewById(R.id.subPercent);
         bill = (EditText) findViewById(R.id.billAmountEdit);
+        split = (Spinner) findViewById(R.id.splitSpinner);
+        splitTotal = (TextView) findViewById(R.id.splitTotal);
 
         bill.setOnEditorActionListener(this);
 
@@ -49,9 +64,38 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         percentNum = parsePercent(percent.getText().toString());
         billNum = 0;
 
+
         savedValues = getSharedPreferences("savedValues", MODE_PRIVATE);
         //probably should just make the app keep the keyboard out or tap on the text and itll come up prob can do edit text like this
         //Make our own keyboard?
+
+        totalNum = 0;
+        splitNum = 0;
+
+        setupSpinner();
+
+        split.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                switch (i){
+                    case 0: splitNum = 1; splitTotal(); break;
+                    case 1: splitNum = 2; splitTotal(); break;
+                    case 2: splitNum = 3; splitTotal(); break;
+                    case 3: splitNum = 4; splitTotal(); break;
+                    case 4: splitNum = 5; splitTotal(); break;
+                    case 5: splitNum = 6; splitTotal(); break;
+                    case 6: splitMore(); break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         bill.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -60,15 +104,22 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!charSequence.toString().matches("")){
+                    billNum = Double.valueOf(charSequence.toString());
+                }
+                else{
+                    billNum = 0;
+                }
 
+                percentNum = parsePercent(percent.getText().toString());
 
-                Log.d("wat", charSequence.toString());
-                c = charSequence;
+                updateValues();
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                tip.setText(c);
+
             }
         });
     }
@@ -76,25 +127,25 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     @Override
     protected void onPause() {
         super.onPause();
-        SharedPreferences.Editor editor = savedValues.edit();
-        editor.putFloat("tipNum", tipNum);
-        editor.putFloat("billNum", billNum);
-        editor.putFloat("percentNum" , percentNum);
-        editor.putFloat("totalNum",totalNum);
-        editor.commit();
-        Toast.makeText(this, "Pause", Toast.LENGTH_SHORT).show();
+//        SharedPreferences.Editor editor = savedValues.edit();
+//        editor.putFloat("tipNum", tipNum);
+//        editor.putFloat("billNum", billNum);
+//        editor.putFloat("percentNum" , percentNum);
+//        editor.putFloat("totalNum",totalNum);
+//        editor.commit();
+//        Toast.makeText(this, "Pause", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        tipNum = savedValues.getFloat("tipNum", 0);
-        billNum = savedValues.getFloat("billNum", 0);
-        percentNum = savedValues.getFloat("percentNum", 0);
-        totalNum = savedValues.getFloat("totalNum", 0);
-        calculateTotal();
-        calculateTip();
-        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
+//        tipNum = savedValues.getFloat("tipNum", 0);
+//        billNum = savedValues.getFloat("billNum", 0);
+//        percentNum = savedValues.getFloat("percentNum", 0);
+//        totalNum = savedValues.getFloat("totalNum", 0);
+//        calculateTotal();
+//        calculateTip();
+//        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -103,33 +154,95 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         super.onDestroy();
     }
 
+    void splitMore(){
+        final AlertDialog.Builder moreDialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog moreDialog = moreDialogBuilder.create();
+        final EditText moreDialogInput = new EditText(this);
+
+
+        moreDialogBuilder.setCancelable(true);
+        moreDialogBuilder.setTitle("More");
+        moreDialogBuilder.setMessage("Enter number of people");
+        moreDialogBuilder.setView(moreDialogInput);
+        moreDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                splitNum = Integer.valueOf(moreDialogInput.getText().toString());
+
+                splitTotal();
+            }
+        });
+        moreDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+
+
+
+        moreDialog.show();
+
+    }
+
+    void updateValues(){
+        calculateTip();
+        calculateTotal();
+        splitTotal();
+    }
+
+    void splitTotal(){
+        if(splitNum != 0){
+            splitTotalNum = (double) Math.round((totalNum/splitNum)*100)/100;
+            splitTotal.setText('$' + Double.toString(splitTotalNum));
+        }
+    }
+
+    void setupSpinner(){
+        ArrayAdapter<CharSequence> adapterSplit = ArrayAdapter.createFromResource(this, R.array.split_array, android.R.layout.simple_spinner_item);
+
+        adapterSplit.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        split.setAdapter(adapterSplit);
+
+        split.setSelection(0);
+    }
+
     void calculateTip(){
-        tipNum = billNum * percentNum/100;
-        tip.setText(Float.toString(tipNum));
+        tipNum = (double) Math.round((billNum * percentNum/100)*100)/100;
+        tip.setText('$'+Double.toString(tipNum));
     }
 
     void calculateTotal(){
 
-        totalNum = tipNum + billNum;
+        totalNum = (double) Math.round((tipNum + billNum) *100)/100;
 
-        total.setText(Float.toString(totalNum));
+        total.setText('$'+Double.toString(totalNum));
     }
 
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         if(i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_UNSPECIFIED){
-            billNum = Float.valueOf(bill.getText().toString());
+
+            if(!bill.getText().toString().matches("")){
+                billNum = Double.valueOf(bill.getText().toString());
+            }
+            else{
+                billNum = 0;
+            }
+
             percentNum = parsePercent(percent.getText().toString());
 
-            calculateTip();
 
-            calculateTotal();
+            updateValues();
+
         }
 
         return false;
     }
 
-    float parsePercent(String percent){
+
+
+    double parsePercent(String percent){
         String noPercentSign;
         noPercentSign = percent.substring(0, percent.length()-1);
         return Float.valueOf(noPercentSign);
@@ -168,19 +281,17 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         switch(view.getId()){
             case R.id.addPercent:
 
-                if( percentNum < 100){
+                if( percentNum < 50){
                     percentNum += 5;
                     percent.setText(Integer.toString((int)(percentNum))+"%");
-                    calculateTip();
-                    calculateTotal();
+                    updateValues();
                 }
                 break;
             case R.id.subPercent:
                 if(percentNum > 0){
                     percentNum -= 5;
                     percent.setText(Integer.toString((int)(percentNum))+"%");
-                    calculateTip();
-                    calculateTotal();
+                    updateValues();
                 }
                 break;
         }
