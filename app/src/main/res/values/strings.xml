@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Tip Calculator</string>
     <string-array name="split_array">
-        <item>None</item>
+        <item>No</item>
         <item>2 People</item>
         <item>3 People</item>
         <item>4 People</item>

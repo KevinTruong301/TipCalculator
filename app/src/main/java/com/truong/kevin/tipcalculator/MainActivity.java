@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//Round with a trailing zero, add more function in spinner
+//Round with a trailing zero, fix shared preferences edittext doesnt hold value and split holds value even when in no
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener {
 
     private TextView tip;
@@ -36,11 +36,11 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
     int splitNum;
 
-    double splitTotalNum;
-    double tipNum;
-    double billNum;
-    double percentNum;
-    double totalNum;
+    float splitTotalNum;
+    float tipNum;
+    float billNum;
+    float percentNum;
+    float totalNum;
 
 
     @Override
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(!charSequence.toString().matches("")){
-                    billNum = Double.valueOf(charSequence.toString());
+                    billNum = Float.valueOf(charSequence.toString());
                 }
                 else{
                     billNum = 0;
@@ -127,25 +127,26 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     @Override
     protected void onPause() {
         super.onPause();
-//        SharedPreferences.Editor editor = savedValues.edit();
-//        editor.putFloat("tipNum", tipNum);
-//        editor.putFloat("billNum", billNum);
-//        editor.putFloat("percentNum" , percentNum);
-//        editor.putFloat("totalNum",totalNum);
-//        editor.commit();
-//        Toast.makeText(this, "Pause", Toast.LENGTH_SHORT).show();
+        SharedPreferences.Editor editor = savedValues.edit();
+        editor.putFloat("tipNum", tipNum);
+        editor.putFloat("billNum", billNum);
+        editor.putFloat("percentNum" , percentNum);
+        editor.putFloat("totalNum",totalNum);
+        editor.commit();
+        Toast.makeText(this, "Pause", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        tipNum = savedValues.getFloat("tipNum", 0);
-//        billNum = savedValues.getFloat("billNum", 0);
-//        percentNum = savedValues.getFloat("percentNum", 0);
-//        totalNum = savedValues.getFloat("totalNum", 0);
-//        calculateTotal();
-//        calculateTip();
-//        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
+        tipNum = savedValues.getFloat("tipNum", 0);
+        billNum = savedValues.getFloat("billNum", 0);
+        percentNum = savedValues.getFloat("percentNum", 0);
+        totalNum = savedValues.getFloat("totalNum", 0);
+
+        updateValues();
+
+        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -191,9 +192,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     void splitTotal(){
-        if(splitNum != 0){
-            splitTotalNum = (double) Math.round((totalNum/splitNum)*100)/100;
-            splitTotal.setText('$' + Double.toString(splitTotalNum));
+        if(splitNum != 0 && splitNum != 0){
+            splitTotalNum = (float) Math.round((totalNum/splitNum)*100)/100;
+            splitTotal.setText('$' + Float.toString(splitTotalNum));
         }
     }
 
@@ -208,15 +209,15 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     void calculateTip(){
-        tipNum = (double) Math.round((billNum * percentNum/100)*100)/100;
-        tip.setText('$'+Double.toString(tipNum));
+        tipNum = (float) Math.round((billNum * percentNum/100)*100)/100;
+        tip.setText('$'+Float.toString(tipNum));
     }
 
     void calculateTotal(){
 
-        totalNum = (double) Math.round((tipNum + billNum) *100)/100;
+        totalNum = (float) Math.round((tipNum + billNum) *100)/100;
 
-        total.setText('$'+Double.toString(totalNum));
+        total.setText('$'+Float.toString(totalNum));
     }
 
     @Override
@@ -224,13 +225,12 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         if(i == EditorInfo.IME_ACTION_DONE || i == EditorInfo.IME_ACTION_UNSPECIFIED){
 
             if(!bill.getText().toString().matches("")){
-                billNum = Double.valueOf(bill.getText().toString());
+                billNum = Float.valueOf(bill.getText().toString());
             }
             else{
                 billNum = 0;
             }
 
-            percentNum = parsePercent(percent.getText().toString());
 
 
             updateValues();
@@ -242,39 +242,13 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
 
 
-    double parsePercent(String percent){
+    float parsePercent(String percent){
         String noPercentSign;
         noPercentSign = percent.substring(0, percent.length()-1);
         return Float.valueOf(noPercentSign);
     }
 
-    void billAmountFormat(String currentTotal, String input){
-        //need to know how to use keyEvent to get the number typed
 
-        //replace the zeros
-            //need to analyze the current situation
-            //keep a stack of the numbers?
-            //keeping a stack of all numbers would probably be easier
-
-        //skip the period
-
-        //keep adding numbers
-
-        //max? do we handle it here?
-
-        //delete and put back zeros
-
-        //negatives?
-
-        //update editText
-    }
-
-    float parseDollar(String dollar){
-        String noDollarSign;
-        noDollarSign = dollar.substring(1, dollar.length());
-        return Float.valueOf(noDollarSign);
-
-    }
 
     @Override
     public void onClick(View view) {
